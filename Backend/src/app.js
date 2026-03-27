@@ -1,25 +1,36 @@
-const express = require("express")
-const cookieParser = require("cookie-parser")
-const cors = require("cors")
+const express = require("express");
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
+const path = require("path");
+const app = express();
 
-const app = express()
-
-app.use(express.json())
-app.use(cookieParser())
+app.use(express.json());
+app.use(cookieParser());
 app.use(cors({
     origin: "http://localhost:5173",
     credentials: true
-}))
+}));
 
 /* require all the routes here */
-const authRouter = require("./routes/auth.routes")
-const interviewRouter = require("./routes/interview.routes")
-
+const authRouter = require("./routes/auth.routes");
+const interviewRouter = require("./routes/interview.routes");
 
 /* using all the routes here */
-app.use("/api/auth", authRouter)
-app.use("/api/interview", interviewRouter)
+app.use("/api/auth", authRouter);
+app.use("/api/interview", interviewRouter);
+
+/* Safely resolve the path to your Frontend/dist folder.
+   Using __dirname ensures it always works, even if you start the 
+   server from a different directory.
+*/
+const frontendDistPath = path.join(__dirname, "../../Frontend/dist");
+
+// Serve the static files
+app.use(express.static(frontendDistPath));
 
 
+app.get(/.*/, (_, res) => {
+    res.sendFile(path.join(frontendDistPath, "index.html"));
+});
 
-module.exports = app
+module.exports = app;
