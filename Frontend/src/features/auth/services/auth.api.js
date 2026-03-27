@@ -2,7 +2,7 @@ import axios from "axios"
 
 
 const api = axios.create({
-    baseURL: "https://jobgpt-1.onrender.com",
+    baseURL: "https://jobgpt-2.onrender.com",
     withCredentials: true
 })
 
