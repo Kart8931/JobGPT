@@ -16,6 +16,44 @@ $info-border:    #2d4a7a;
 $font-stack:     system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
 // ── Page Shell ───────────────────────────────────────────────────────────────
+
+// Existing page-header ko update karein
+.page-header {
+    text-align: center;
+    position: relative; // ✅ Isse button ko align karna easy hoga
+    padding-top: 2rem;  // ✅ Header ko thoda niche shift kiya
+    width: 100%;
+    max-width: 900px;
+
+    h1 {
+        font-size: 2.25rem;
+        // ... rest of your code
+    }
+}
+
+// ✅ Naya class Logout Button ke liye
+.logout-btn {
+    position: absolute;
+    top: 0;        // Header ke top par
+    right: 0;      // Header ke bilkul right mein
+    padding: 0.5rem 1.2rem;
+    background-color: $accent;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, opacity 0.2s;
+
+    &:hover {
+        opacity: 0.9;
+        transform: translateY(-2px); // Hover effect
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
 .home-page {
     width: 100%;
     min-height: 100vh;

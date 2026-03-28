@@ -131,16 +131,35 @@ async function logoutUserController(req, res) {
  * @access private
  */
 async function getMeController(req, res) {
-    const user = await userModel.findById(req.user.id)
-
-    res.status(200).json({
-        message: "User details fetched successfully",
-        user: {
-            id: user._id,
-            username: user.username,
-            email: user.email
+    try {
+        // 1. Double-check that the middleware successfully attached the user ID
+        if (!req.user || !req.user.id) {
+            return res.status(401).json({ message: "Unauthorized: No user ID provided" });
         }
-    })
+
+        // 2. Look up the user in the database
+        const user = await userModel.findById(req.user.id);
+
+        // 3. Handle the edge case where the token is valid but the user was deleted
+        if (!user) {
+            return res.status(404).json({ message: "User not found in database" });
+        }
+
+        // 4. Success! Send back the sanitized data
+        res.status(200).json({
+            message: "User details fetched successfully",
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email
+            }
+        });
+
+    } catch (error) {
+        // 5. Catch any database connection errors or unexpected bugs
+        console.error("Error in getMeController:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
 }
 
 module.exports = {
