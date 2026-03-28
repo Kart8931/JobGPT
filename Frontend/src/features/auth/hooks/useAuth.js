@@ -2,7 +2,7 @@ import { useContext, useEffect } from "react";
 import { AuthContext } from "../auth.context";
 import { login, register, logout, getMe } from "../services/auth.api";
 
-
+import axios from 'axios'
 
 export const useAuth = () => {
 
@@ -13,10 +13,12 @@ export const useAuth = () => {
     const handleLogin = async ({ email, password }) => {
         setLoading(true)
         try {
+             axios.defaults.withCredentials = true;
             const data = await login({ email, password })
             setUser(data.user)
         } catch (err) {
-
+           console.log(err);
+           
         } finally {
             setLoading(false)
         }
@@ -25,10 +27,12 @@ export const useAuth = () => {
     const handleRegister = async ({ username, email, password }) => {
         setLoading(true)
         try {
+             axios.defaults.withCredentials = true;
             const data = await register({ username, email, password })
             setUser(data.user)
         } catch (err) {
-
+           console.log(err);
+           
         } finally {
             setLoading(false)
         }
@@ -37,10 +41,12 @@ export const useAuth = () => {
     const handleLogout = async () => {
         setLoading(true)
         try {
+             axios.defaults.withCredentials = true;
             const data = await logout()
             setUser(null)
         } catch (err) {
-
+           console.log(err);
+           
         } finally {
             setLoading(false)
         }
@@ -50,10 +56,11 @@ export const useAuth = () => {
 
         const getAndSetUser = async () => {
             try {
-
+                axios.defaults.withCredentials = true;
                 const data = await getMe()
                 setUser(data.user)
-            } catch (err) { } finally {
+            } catch (err) { console.log(err);
+            } finally {
                 setLoading(false)
             }
         }

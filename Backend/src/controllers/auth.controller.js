@@ -3,13 +3,20 @@ const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const tokenBlacklistModel = require("../models/blacklist.model")
 
+// Ye options Render (HTTPS) aur alag frontend domain ke liye zaroori hain
+const cookieOptions = {
+    httpOnly: true,
+    secure: true,      // Render HTTPS use karta hai isliye true
+    sameSite: 'none',  // Frontend aur backend alag domains par hain uske liye
+    maxAge: 24 * 60 * 60 * 1000 // 1 din
+};
+
 /**
  * @name registerUserController
  * @description register a new user, expects username, email and password in the request body
  * @access Public
  */
 async function registerUserController(req, res) {
-
     const { username, email, password } = req.body
 
     if (!username || !email || !password) {
@@ -42,8 +49,8 @@ async function registerUserController(req, res) {
         { expiresIn: "1d" }
     )
 
-    res.cookie("token", token)
-
+    // Updated cookie sending
+    res.cookie("token", token, cookieOptions)
 
     res.status(201).json({
         message: "User registered successfully",
@@ -53,9 +60,7 @@ async function registerUserController(req, res) {
             email: user.email
         }
     })
-
 }
-
 
 /**
  * @name loginUserController
@@ -63,7 +68,6 @@ async function registerUserController(req, res) {
  * @access Public
  */
 async function loginUserController(req, res) {
-
     const { email, password } = req.body
 
     const user = await userModel.findOne({ email })
@@ -88,7 +92,9 @@ async function loginUserController(req, res) {
         { expiresIn: "1d" }
     )
 
-    res.cookie("token", token)
+    // Updated cookie sending
+    res.cookie("token", token, cookieOptions)
+    
     res.status(200).json({
         message: "User loggedIn successfully.",
         user: {
@@ -98,7 +104,6 @@ async function loginUserController(req, res) {
         }
     })
 }
-
 
 /**
  * @name logoutUserController
@@ -112,7 +117,8 @@ async function logoutUserController(req, res) {
         await tokenBlacklistModel.create({ token })
     }
 
-    res.clearCookie("token")
+    // Clear karte time bhi same options dena safe practice hai
+    res.clearCookie("token", cookieOptions)
 
     res.status(200).json({
         message: "User logged out successfully"
@@ -125,10 +131,7 @@ async function logoutUserController(req, res) {
  * @access private
  */
 async function getMeController(req, res) {
-
     const user = await userModel.findById(req.user.id)
-
-
 
     res.status(200).json({
         message: "User details fetched successfully",
@@ -138,10 +141,7 @@ async function getMeController(req, res) {
             email: user.email
         }
     })
-
 }
-
-
 
 module.exports = {
     registerUserController,
